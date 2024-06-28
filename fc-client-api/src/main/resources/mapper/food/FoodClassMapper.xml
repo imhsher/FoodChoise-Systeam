@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcys.foodchoice.client.dao.FoodClassMapper">
+
+    <select id="selectByFoodId" resultType="com.imcys.foodchoice.client.model.food.FoodClass">
+        select ffc.*
+        from fc_food_class ffc
+                 join fc_food_class_info_merge ffcim on ffcim.f_class_id = ffc.id
+        where ffcim.f_id = #{foodId}
+    </select>
+
+
+
+</mapper>

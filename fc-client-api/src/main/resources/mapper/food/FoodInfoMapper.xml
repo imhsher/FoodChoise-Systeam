@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcys.foodchoice.client.dao.FoodInfoMapper">
+
+    <resultMap id="foodInfoMap" type="com.imcys.foodchoice.client.model.food.FoodInfo" autoMapping="true">
+        <id column="id" property="id"/>
+        <association property="classInfo"
+                     autoMapping="true"
+                     column="id"
+                     select="com.imcys.foodchoice.client.dao.FoodClassMapper.selectByFoodId"
+        />
+        <collection property="labels" ofType="com.imcys.foodchoice.client.model.food.FoodLabel" columnPrefix="ffl_"
+                    autoMapping="true"/>
+    </resultMap>
+
+    <select id="selectByCardId" resultMap="foodInfoMap">
+        select ffi.*,
+               ffcim.f_card_id card_id,
+               ffl.id          ffl_id,
+               ffl.user_id     ffl_user_id,
+               ffl.f_card_id   ffc_f_card_id,
+               ffl.name        ffl_name,
+               ffl.create_time ffl_create_time,
+               ffl.deleted     ffl_deleted
+        from fc_food_info ffi
+                 left join fc_food_card_info_merge ffcim on ffcim.f_id = ffi.id
+                 left join fc_food_label_info_merge fflim on ffi.id = fflim.f_id
+                 left join fc_food_label ffl on ffl.id = fflim.f_label_id and ffl.user_id = ffi.user_id
+        where ffcim.f_card_id = #{cardId}
+    </select>
+
+</mapper>
+
+

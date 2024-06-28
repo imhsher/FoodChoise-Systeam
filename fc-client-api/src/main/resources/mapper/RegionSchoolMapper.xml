@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcys.foodchoice.client.dao.RegionSchoolMapper">
+
+
+    <resultMap id="RegionSchoolResult" type="com.imcys.foodchoice.client.model.region.RegionSchool" autoMapping="true">
+        <id property="id" column="id"/>
+        <association property="provinceId" autoMapping="true" columnPrefix="frp_" column="province_id"/>
+    </resultMap>
+
+
+    <select id="selectSchoolByName" resultMap="RegionSchoolResult">
+        select frs.*,
+        frp.id frp_id,
+        frp.code frp_code,
+        frp.name frp_name
+        from fc_region_school frs
+        left join fc_region_province frp on frs.province_id = frp.id
+
+        <where>
+            <if test="name != null and name != ''">frs.name like concat('%',#{name},'%')</if>
+        </where>
+
+    </select>
+
+</mapper>

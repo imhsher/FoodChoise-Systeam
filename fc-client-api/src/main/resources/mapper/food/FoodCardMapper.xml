@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcys.foodchoice.client.dao.FoodCardMapper">
+
+    <resultMap id="selectByShareMap" type="com.imcys.foodchoice.client.model.food.FoodCard" autoMapping="true">
+
+        <id column="id" property="id"/>
+        <association property="userInfo" column="user_id" columnPrefix="fui_" autoMapping="true"/>
+        <association property="schoolInfo" column="school_id" columnPrefix="frs_" autoMapping="true"/>
+        <association property="locationInfo" column="location_id" columnPrefix="ffcsl_" autoMapping="true"/>
+
+    </resultMap>
+
+    <select id="selectByShare" resultMap="selectByShareMap">
+        select ffc.*,
+               fui.id            as fui_id,
+               fui.school_id     as fui_school_id,
+               fui.nickname      as fui_nickname,
+               fui.username      as fui_username,
+               fui.gender        as fui_gender,
+               fui.head_pic      as fui_head_pic,
+               frs.id            as frs_id,
+               frs.city_id       as frs_city_id,
+               frs.department    as frs_department,
+               frs.name          as frs_name,
+               frs.level         as frs_level
+        from fc_food_card ffc
+                 left join fc_user_info fui on ffc.user_id = fui.id
+                 left join fc_region_school frs on ffc.school_id = frs.id
+        where ffc.share_state = 1
+        order by rand()
+    </select>
+
+
+
+    <select id="selectByIdAndShare" resultMap="selectByShareMap">
+        select ffc.*,
+               fui.id            as fui_id,
+               fui.school_id     as fui_school_id,
+               fui.nickname      as fui_nickname,
+               fui.username      as fui_username,
+               fui.gender        as fui_gender,
+               frs.id            as frs_id,
+               frs.city_id       as frs_city_id,
+               frs.department    as frs_department,
+               frs.name          as frs_name,
+               frs.level         as frs_level
+        from fc_food_card ffc
+                 left join fc_user_info fui on ffc.user_id = fui.id
+                 left join fc_region_school frs on ffc.school_id = frs.id
+        where ffc.id = #{cardId} and ffc.share_state = 1
+            limit 1
+    </select>
+
+
+    <select id="selectByFoodId" resultType="com.imcys.foodchoice.client.model.food.FoodCard">
+        select ffc.*
+        from fc_food_card ffc
+                 left join fc_food_card_info_merge ffcim on ffc.id = ffcim.f_card_id
+        where ffcim.f_id = #{foodId}
+    </select>
+
+</mapper>

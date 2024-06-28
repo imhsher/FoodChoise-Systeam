@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imcys.foodchoice.client.dao.UserInfoMapper">
+    <select id="selectByNameOrEmail" resultType="com.imcys.foodchoice.client.model.user.UserInfo">
+        select * from fc_user_info
+        <where>
+            <if test="username != null and username != ''">username =#{username}</if>
+            <if test="email != null and email != ''">or email =#{email}</if>
+        </where>
+    </select>
+
+    <resultMap id="selectOptByIdMap" type="com.imcys.foodchoice.client.model.user.UserInfo" autoMapping="true">
+        <id column="id" property="id"/>
+        <association property="schoolInfo" column="frs_id" autoMapping="true" columnPrefix="frs_"/>
+    </resultMap>
+
+    <select id="selectOptById" resultMap="selectOptByIdMap">
+        select fui.*,
+               frs.id          frs_id,
+               frs.name        frs_name,
+               frs.level       frs_level,
+               frs.department  frs_department,
+               frs.province_id frs_province_id,
+               frs.code        frs_code,
+               frs.other       frs_other,
+               frs.city_id     frs_city_id
+        from fc_user_info fui
+                 left join fc_region_school frs on fui.school_id = frs.id
+        where fui.id = #{userId}
+    </select>
+</mapper>
